@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DbModels;
+using Microsoft.Extensions.Logging;
 using Models;
 using Models.DTO;
 using Models.Interfaces;
@@ -11,7 +12,7 @@ public class MusicGroupsServiceWapi : IMusicGroupsService
     private readonly ILogger<MusicGroupsServiceWapi> _logger;
     private readonly HttpClient _httpClient;
 
-    //To ensure Json deserializern is using the class implementations instead of interfaces 
+    //To ensure Json deserializern is using the class implementations instead of interfaces
     private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
     {
         Converters = {
@@ -27,7 +28,7 @@ public class MusicGroupsServiceWapi : IMusicGroupsService
         _httpClient = httpClientFactory.CreateClient(name: "MusicWebApi");
     }
 
-    public async Task<ResponsePageDto<IMusicGroup>> ReadMusicGroupsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize) 
+    public async Task<ResponsePageDto<IMusicGroup>> ReadMusicGroupsAsync(bool seeded, bool flat, string filter, int pageNumber, int pageSize)
     {
         string uri = $"musicgroups/read?seeded={seeded}&flat={flat}&filter={filter}&pagenr={pageNumber}&pagesize={pageSize}";
 
@@ -45,26 +46,82 @@ public class MusicGroupsServiceWapi : IMusicGroupsService
     public async Task<ResponseItemDto<IMusicGroup>> ReadMusicGroupAsync(Guid id, bool flat)
     {
         string uri = $"musicgroups/readitem?id={id}&flat={flat}";
+        HttpResponseMessage response = await _httpClient.GetAsync(uri);
 
-        throw new NotImplementedException();
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        return resp;
+
+        // throw new NotImplementedException();
     }
     public async Task<ResponseItemDto<IMusicGroup>> DeleteMusicGroupAsync(Guid id)
     {
         string uri = $"musicgroups/deleteitem/{id}";
 
-        throw new NotImplementedException();
+        HttpResponseMessage response = await _httpClient.DeleteAsync(uri);
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        return resp;
+
+
+        // throw new NotImplementedException();
     }
     public async Task<ResponseItemDto<IMusicGroup>> UpdateMusicGroupAsync(MusicGroupCUdto item)
     {
         string uri = $"musicgroups/updateitem/{item.MusicGroupId}";
 
-        throw new NotImplementedException();
+        // var item = new MusicGroupDbM(itemDbM)
+
+        // HttpResponseMessage response = await _httpClient.PostAsync(itemDto, item);
+
+        // string s = await response.Content.ReadAsStringAsync();
+        // var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        // return resp;
+
+        string json = JsonConvert.SerializeObject(item);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _httpClient.PutAsync(uri, content);
+        await response.EnsureSuccessStatusMessage();
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        return resp;
+
+        // throw new NotImplementedException();
     }
     public async Task<ResponseItemDto<IMusicGroup>> CreateMusicGroupAsync(MusicGroupCUdto item)
     {
         string uri = $"musicgroups/createitem";
 
-        throw new NotImplementedException();
+        // item.Seeded = false;
+        // var itemNew = new MusicGroupDbM(item);
+
+
+        // HttpResponseMessage response = await _httpClient.PostAsync(item);
+
+        // string s = await response.Content.ReadAsStringAsync();
+        // var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        // return resp;
+        item.MusicGroupId = null;
+        string json = JsonConvert.SerializeObject(item);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _httpClient.PostAsync(uri, content);
+        await response.EnsureSuccessStatusMessage();
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IMusicGroup>>(s, _jsonSettings);
+
+        return resp;
+
+
+        // throw new NotImplementedException();
     }
+
 }
 

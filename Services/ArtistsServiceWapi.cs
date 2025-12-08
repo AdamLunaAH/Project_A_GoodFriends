@@ -12,7 +12,7 @@ public class ArtistsServiceWapi : IArtistsService
     private readonly ILogger<ArtistsServiceWapi> _logger;
     private readonly HttpClient _httpClient;
 
-    //To ensure Json deserializern is using the class implementations instead of interfaces 
+    //To ensure Json deserializern is using the class implementations instead of interfaces
     private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
     {
         Converters = {
@@ -47,25 +47,68 @@ public class ArtistsServiceWapi : IArtistsService
     {
         string uri = $"artists/readitem?id={id}&flat={flat}";
 
-        throw new NotImplementedException();
+        HttpResponseMessage response = await _httpClient.GetAsync(uri);
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);
+
+        return resp;
+
+        // throw new NotImplementedException();
     }
     public async Task<ResponseItemDto<IArtist>> DeleteArtistAsync(Guid id)
     {
         string uri = $"artists/deleteitem/{id}";
 
-        throw new NotImplementedException();
+        HttpResponseMessage response = await _httpClient.DeleteAsync(uri);
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);
+
+        return resp;
+
+        // throw new NotImplementedException();
     }
     public async Task<ResponseItemDto<IArtist>> UpdateArtistAsync(ArtistCUdto item)
     {
         string uri = $"artists/updateitem/{item.ArtistId}";
+        // itemUpdate.ArtistCUdto(item);
 
-        throw new NotImplementedException();
+        // HttpResponseMessage response = await _httpClient.PutAsync(item.ArtistId.ToString(), item);
+
+        // string s = await response.Content.ReadAsStringAsync();
+        // var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);
+
+        // return resp;
+
+        // throw new NotImplementedException();
+
+        item.ArtistId = null;
+        string json = JsonConvert.SerializeObject(item);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _httpClient.PostAsync(uri, content);
+        await response.EnsureSuccessStatusMessage();
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);
+
+        return resp;
+
     }
     public async Task<ResponseItemDto<IArtist>> CreateArtistAsync(ArtistCUdto item)
     {
         string uri = $"artists/createitem";
 
-        throw new NotImplementedException();
+        string json = JsonConvert.SerializeObject(item);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _httpClient.PutAsync(uri, content);
+
+        string s = await response.Content.ReadAsStringAsync();
+        var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);
+
+        return resp;
+
+        // throw new NotImplementedException();
     }
 }
 
