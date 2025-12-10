@@ -13,7 +13,7 @@ namespace AppRazor.Pages
 
         [BindProperty]
         public bool UseSeeds { get; set; } = true;
-        
+
         public List<IMusicGroup> MusicGroups { get; set; }
 
         public int NrOfGroups { get; set; }
@@ -33,7 +33,7 @@ namespace AppRazor.Pages
 
         //will execute on a Get request
         public async Task<IActionResult> OnGet()
-        {   
+        {
             //Read a QueryParameters
             if (int.TryParse(Request.Query["pagenr"], out int pagenr))
             {

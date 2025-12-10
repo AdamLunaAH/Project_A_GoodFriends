@@ -83,10 +83,10 @@ public class ArtistsServiceWapi : IArtistsService
 
         // throw new NotImplementedException();
 
-        item.ArtistId = null;
+        // item.ArtistId = null;
         string json = JsonConvert.SerializeObject(item);
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _httpClient.PostAsync(uri, content);
+        HttpResponseMessage response = await _httpClient.PutAsync(uri, content);
         await response.EnsureSuccessStatusMessage();
 
         string s = await response.Content.ReadAsStringAsync();
@@ -99,9 +99,10 @@ public class ArtistsServiceWapi : IArtistsService
     {
         string uri = $"artists/createitem";
 
+        item.ArtistId = null;
         string json = JsonConvert.SerializeObject(item);
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _httpClient.PutAsync(uri, content);
+        HttpResponseMessage response = await _httpClient.PostAsync(uri, content);
 
         string s = await response.Content.ReadAsStringAsync();
         var resp = JsonConvert.DeserializeObject<ResponseItemDto<IArtist>>(s, _jsonSettings);

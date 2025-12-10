@@ -43,7 +43,7 @@ public class MusicGroupsDbRepos
 
             item = await query.FirstOrDefaultAsync<IMusicGroup>();
         }
-        
+
         if (item == null) throw new ArgumentException($"Item {id} is not existing");
         return new ResponseItemDto<IMusicGroup>()
         {
@@ -125,7 +125,7 @@ public class MusicGroupsDbRepos
             ConnectionString = _dbContext.dbConnection,
 #endif
             Item = item
-        }; 
+        };
     }
 
     public async Task<ResponseItemDto<IMusicGroup>> UpdateMusicGroupAsync(MusicGroupCUdto itemDto)
@@ -155,7 +155,7 @@ public class MusicGroupsDbRepos
         await _dbContext.SaveChangesAsync();
 
         //return the updated item in non-flat mode
-        return await ReadMusicGroupAsync(item.MusicGroupId, false);    
+        return await ReadMusicGroupAsync(item.MusicGroupId, false);
     }
 
     public async Task<ResponseItemDto<IMusicGroup>> CreateMusicGroupAsync(MusicGroupCUdto itemDto)
@@ -165,7 +165,7 @@ public class MusicGroupsDbRepos
 
         //transfer any changes from DTO to database objects
         //Update individual properties. Seeded always false on created items
-        itemDto.Seeded = false; 
+        itemDto.Seeded = false;
         var item = new MusicGroupDbM(itemDto);
 
         //Update navigation properties
@@ -176,12 +176,12 @@ public class MusicGroupsDbRepos
 
         //write to database in a UoW
         await _dbContext.SaveChangesAsync();
-        
+
         //return the updated item in non-flat mode
-        return await ReadMusicGroupAsync(item.MusicGroupId, false);   
+        return await ReadMusicGroupAsync(item.MusicGroupId, false);
     }
 
-    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst 
+    //from all Guid relationships in _itemDtoSrc finds the corresponding object in the database and assigns it to _itemDst
     //as navigation properties. Error is thrown if no object is found corresponing to an id.
     private async Task navProp_MusicGroupCUdto_To_MusicGroup(MusicGroupCUdto itemDtoSrc, MusicGroupDbM itemDst)
     {
